@@ -22,10 +22,10 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-    .main { background: #f7f8fc; }
-    .stApp { background: #f7f8fc; }
+    .main { background: #000000;}
+    .stApp { background: #ffffff;}
     .metric-card {
-        background: white; border-radius: 14px; padding: 20px 24px;
+        background: Black; border-radius: 14px; padding: 20px 24px;
         box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 12px;
         border-left: 5px solid #5c67f2;
     }
@@ -42,21 +42,47 @@ st.markdown("""
     .risk-low    { background: #e8faf0; color: #1e8449; border: 1px solid #27ae60; }
     .sidebar-header {
         background: linear-gradient(135deg, #5c67f2, #7b5cf0);
-        color: white; padding: 18px 16px; border-radius: 12px;
+        color: Black; padding: 18px 16px; border-radius: 12px;
         margin-bottom: 20px; text-align: center;
     }
     div[data-testid="stMetricValue"] { font-size: 2rem; font-weight: 700; }
     .stButton > button {
         width: 100%; background: linear-gradient(135deg, #5c67f2, #7b5cf0);
-        color: white; border: none; border-radius: 10px; padding: 12px;
+        color: Black; border: none; border-radius: 10px; padding: 12px;
         font-size: 1rem; font-weight: 600; transition: opacity 0.2s;
     }
-    .stButton > button:hover { opacity: 0.88; color: white; }
+    .stButton > button:hover { opacity: 0.88; color: Black; }
     h1 { color: #1a1a2e; }
     h2 { color: #2c3e6b; }
     h3 { color: #34495e; }
 
-    /* Force readable label text for all input widgets (sliders, selectboxes, text inputs) */
+    /* ============================================================
+       FORCE LIGHT THEME EVERYWHERE
+       This overrides Streamlit's automatic dark mode (which happens
+       when the OS/browser is set to dark mode) so the app always
+       looks the same: white/light background + dark, readable text.
+       ============================================================ */
+
+    /* Force light backgrounds on every container Streamlit might darken */
+    html, body, .stApp, [data-testid="stAppViewContainer"],
+    [data-testid="stHeader"], [data-testid="stToolbar"],
+    section[data-testid="stSidebar"], .main, .block-container {
+        background-color: #f7f8fc !important;
+    }
+    section[data-testid="stSidebar"] {
+        background-color: #ffffff !important;
+    }
+
+    /* Force dark, readable text everywhere by default */
+    html, body, .stApp, .main, .block-container,
+    p, span, label, li, div {
+        color: #1a1a2e !important;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 { color: #1a1a2e !important; }
+
+    /* Widget labels (sliders, selectboxes, text inputs, radio, checkbox, number input) */
     .stSlider label, .stSelectbox label, .stTextInput label,
     .stNumberInput label, .stRadio label, .stCheckbox label,
     div[data-testid="stWidgetLabel"] label,
@@ -65,14 +91,33 @@ st.markdown("""
         font-weight: 600 !important;
         font-size: 0.95rem !important;
     }
-    /* Slider current-value bubble text */
+
+    /* Slider min/max tick labels and current value */
     div[data-testid="stSliderTickBarMin"],
-    div[data-testid="stSliderTickBarMax"] {
-        color: #555 !important;
+    div[data-testid="stSliderTickBarMax"],
+    div[data-testid="stThumbValue"] {
+        color: #1a1a2e !important;
     }
-    /* General body/paragraph text inside main content */
-    .main p, .main span, .main label {
-        color: #1a1a2e;
+
+    /* Radio / selectbox option text */
+    div[role="radiogroup"] label, div[data-baseweb="select"] * {
+        color: #1a1a2e !important;
+    }
+
+    /* Dataframe / table text */
+    [data-testid="stDataFrame"] * { color: #1a1a2e !important; }
+
+    /* Keep elements that are SUPPOSED to be white-on-color (buttons, sidebar header, result cards) readable */
+    .stButton > button, .stButton > button * { color: #ffffff !important; }
+    .sidebar-header, .sidebar-header * { color: #ffffff !important; }
+    .result-pass, .result-pass * { color: #1a1a2e !important; }
+    .result-fail, .result-fail * { color: #1a1a2e !important; }
+
+    /* Metric widgets (st.metric) */
+    div[data-testid="stMetricValue"],
+    div[data-testid="stMetricLabel"],
+    div[data-testid="stMetricDelta"] {
+        color: #1a1a2e !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -195,11 +240,11 @@ if page == "🏠  Dashboard":
         grade_counts = df['grade'].value_counts().reindex(['O','A+','A','B+','B','C','F'], fill_value=0)
         fig, ax = plt.subplots(figsize=(6,4))
         colors = [GRADE_COLOR[g] for g in grade_counts.index]
-        bars = ax.bar(grade_counts.index, grade_counts.values, color=colors, edgecolor='white', linewidth=1.5, width=0.6)
+        bars = ax.bar(grade_counts.index, grade_counts.values, color=colors, edgecolor='Black', linewidth=1.5, width=0.6)
         for bar, val in zip(bars, grade_counts.values):
             ax.text(bar.get_x()+bar.get_width()/2, bar.get_height()+1, str(val), ha='center', fontweight='bold', fontsize=10)
         ax.set_xlabel("Grade", fontsize=11); ax.set_ylabel("Number of Students", fontsize=11)
-        ax.set_facecolor("#eae5e5ff"); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#150101"); fig.patch.set_facecolor('Black')
         ax.spines[['top','right']].set_visible(False)
         st.pyplot(fig); plt.close()
 
@@ -211,7 +256,7 @@ if page == "🏠  Dashboard":
         ax.axvline(40, color='#f39c12', linestyle=':', linewidth=2, label="Pass Line (40)")
         ax.set_xlabel("Final Score", fontsize=11); ax.set_ylabel("Count", fontsize=11)
         ax.legend(fontsize=9)
-        ax.set_facecolor('#f9f9f9'); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#0e0202"); fig.patch.set_facecolor('Black')
         ax.spines[['top','right']].set_visible(False)
         st.pyplot(fig); plt.close()
 
@@ -224,9 +269,9 @@ if page == "🏠  Dashboard":
         grp = df.groupby('att_bracket', observed=True)['final_score'].mean().reset_index()
         fig, ax = plt.subplots(figsize=(6,4))
         ax.bar(grp['att_bracket'].astype(str), grp['final_score'],
-               color='#27ae60', alpha=0.85, edgecolor='white', linewidth=1.2, width=0.6)
+               color="#09130d", alpha=0.85, edgecolor='Black', linewidth=1.2, width=0.6)
         ax.set_xlabel("Attendance %", fontsize=11); ax.set_ylabel("Avg Final Score", fontsize=11)
-        ax.set_facecolor("#170A0A"); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#150d0d"); fig.patch.set_facecolor('Black')
         ax.spines[['top','right']].set_visible(False)
         st.pyplot(fig); plt.close()
 
@@ -241,7 +286,7 @@ if page == "🏠  Dashboard":
         xs = np.linspace(df['study_hours'].min(), df['study_hours'].max(), 100)
         ax.plot(xs, p(xs), 'r--', linewidth=1.5, alpha=0.8)
         ax.set_xlabel("Daily Study Hours", fontsize=11); ax.set_ylabel("Final Score", fontsize=11)
-        ax.set_facecolor("#1a0707"); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#0A0202"); fig.patch.set_facecolor('Black')
         ax.spines[['top','right']].set_visible(False)
         st.pyplot(fig); plt.close()
 
@@ -334,7 +379,7 @@ elif page == "🔮  Predict":
                         f"{val:.1f}", va='center', fontweight='bold', fontsize=10)
             ax.set_xlim(0, 105); ax.set_xlabel("Score (%)")
             ax.axvline(40, color='red', linestyle='--', linewidth=1, alpha=0.6)
-            ax.set_facecolor('#f9f9f9'); fig.patch.set_facecolor('white')
+            ax.set_facecolor("#110202"); fig.patch.set_facecolor('Black')
             ax.spines[['top','right']].set_visible(False)
             st.pyplot(fig); plt.close()
 
@@ -437,9 +482,9 @@ elif page == "📊  EDA & Analytics":
             ax.axvline(df[feat].mean(), color='black', linestyle='--', linewidth=1.5, label=f"μ={df[feat].mean():.1f}")
             ax.set_title(feat.replace('_',' ').title(), fontweight='bold')
             ax.legend(fontsize=8)
-            ax.set_facecolor('#f9f9f9')
+            ax.set_facecolor("#0e0303")
             ax.spines[['top','right']].set_visible(False)
-        fig.patch.set_facecolor('white')
+        fig.patch.set_facecolor('Black')
         plt.tight_layout()
         st.pyplot(fig); plt.close()
 
@@ -459,12 +504,12 @@ elif page == "📊  EDA & Analytics":
         fi_sorted = feat_imp.sort_values(ascending=True)
         fig, ax = plt.subplots(figsize=(8, 5))
         colors_fi = plt.cm.RdYlGn(np.linspace(0.2, 0.9, len(fi_sorted)))
-        bars = ax.barh(fi_sorted.index, fi_sorted.values, color=colors_fi, edgecolor='white', height=0.6)
+        bars = ax.barh(fi_sorted.index, fi_sorted.values, color=colors_fi, edgecolor='Black', height=0.6)
         for bar, val in zip(bars, fi_sorted.values):
             ax.text(val+0.002, bar.get_y()+bar.get_height()/2,
                     f"{val:.3f}", va='center', fontsize=9, fontweight='bold')
         ax.set_xlabel("Importance Score"); ax.set_title("Feature Importance", fontweight='bold')
-        ax.set_facecolor('#f9f9f9'); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#0d0101"); fig.patch.set_facecolor('Black')
         ax.spines[['top','right']].set_visible(False)
         plt.tight_layout()
         st.pyplot(fig); plt.close()
@@ -484,7 +529,7 @@ elif page == "📊  EDA & Analytics":
         ax.set_ylabel("Final Score", fontsize=11)
         corr_val = df[feat_choice].corr(df['final_score'])
         ax.set_title(f"Pearson Correlation: r = {corr_val:.3f}", fontweight='bold')
-        ax.legend(); ax.set_facecolor('#f9f9f9'); fig.patch.set_facecolor('white')
+        ax.legend(); ax.set_facecolor("#0c0404"); fig.patch.set_facecolor('Black')
         ax.spines[['top','right']].set_visible(False)
         plt.tight_layout()
         st.pyplot(fig); plt.close()
@@ -500,7 +545,7 @@ elif page == "📊  EDA & Analytics":
             patch.set_facecolor(GRADE_COLOR.get(g,'#5c67f2'))
             patch.set_alpha(0.75)
         ax.set_xlabel("Grade", fontsize=11); ax.set_ylabel("Final Score", fontsize=11)
-        ax.set_facecolor('#f9f9f9'); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#0c0202"); fig.patch.set_facecolor('Black')
         ax.spines[['top','right']].set_visible(False)
         plt.tight_layout()
         st.pyplot(fig); plt.close()
@@ -531,9 +576,9 @@ elif page == "🤖  Model Performance":
         r2_vals   = [0.7646, 0.6557, 0.6957]
         colors_b  = ['#5c67f2','#27ae60','#e67e22']
 
-        axes[0].bar(models, rmse_vals, color=colors_b, edgecolor='white', linewidth=1.5, width=0.5)
+        axes[0].bar(models, rmse_vals, color=colors_b, edgecolor='Black', linewidth=1.5, width=0.5)
         axes[0].set_title("RMSE Comparison (Lower = Better)", fontweight='bold')
-        axes[0].set_ylabel("RMSE"); axes[0].set_facecolor('#f9f9f9')
+        axes[0].set_ylabel("RMSE"); axes[0].set_facecolor("#0c0202")
         axes[0].spines[['top','right']].set_visible(False)
         for bar, val in zip(axes[0].patches, rmse_vals):
             axes[0].text(bar.get_x()+bar.get_width()/2, bar.get_height()+0.1,
@@ -542,13 +587,13 @@ elif page == "🤖  Model Performance":
         axes[1].bar(models, r2_vals, color=colors_b, edgecolor='white', linewidth=1.5, width=0.5)
         axes[1].set_title("R² Score Comparison (Higher = Better)", fontweight='bold')
         axes[1].set_ylabel("R² Score"); axes[1].set_ylim(0, 1)
-        axes[1].set_facecolor('#f9f9f9')
+        axes[1].set_facecolor("#0e0303")
         axes[1].spines[['top','right']].set_visible(False)
         for bar, val in zip(axes[1].patches, r2_vals):
             axes[1].text(bar.get_x()+bar.get_width()/2, bar.get_height()+0.01,
                          f"{val:.4f}", ha='center', fontweight='bold', fontsize=9)
 
-        fig.patch.set_facecolor('white')
+        fig.patch.set_facecolor('Black')
         plt.tight_layout()
         st.pyplot(fig); plt.close()
 
@@ -617,20 +662,9 @@ elif page == "ℹ️  About":
             "School":         "School of Information Technology",
             "Branch":         "CSE (Data Science)",
             "Semester":       "6th Semester",
-            "Session":        "2025–26",
+            "Session":        "2024–25",
         }
-        #for k, v in details.items():
-            #st.markdown(f"**{k}:** {v}")
-
-        #st.markdown("---")
-        #st.subheader("👨‍💻 Team Members")
-        #st.markdown("- **NAME-1** *(Enrollment No.-1)*")
-       # st.markdown("- **NAME-2** *(Enrollment No.-2)*")
-        #st.markdown("- **NAME-3** *(Enrollment No.-3)*")
-        #st.markdown("")
-        #st.markdown("**Guide:** [Guide Name] — *Designation*")
-        #st.markdown("**Co-Guide:** [Co-Guide Name] — *Designation*")
-
+        
     with col2:
         st.subheader("⚙️ Tech Stack")
         tech = ["Python 3.10", "Scikit-learn", "Pandas", "NumPy",
@@ -659,5 +693,5 @@ elif page == "ℹ️  About":
         - **Grade Scale:** O / A+ / A / B+ / B / C / F
         """)
 
-    st.markdown("---")
-    st.info("🏫 **School of Information Technology** | Rajiv Gandhi Proudyogiki Vishwavidyalaya, Bhopal")
+    #st.markdown("---")
+    #st.info("🏫 **School of Information Technology** | Rajiv Gandhi Proudyogiki Vishwavidyalaya, Bhopal")
