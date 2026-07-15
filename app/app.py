@@ -55,13 +55,33 @@ st.markdown("""
     h1 { color: #1a1a2e; }
     h2 { color: #2c3e6b; }
     h3 { color: #34495e; }
+
+    /* Force readable label text for all input widgets (sliders, selectboxes, text inputs) */
+    .stSlider label, .stSelectbox label, .stTextInput label,
+    .stNumberInput label, .stRadio label, .stCheckbox label,
+    div[data-testid="stWidgetLabel"] label,
+    div[data-testid="stWidgetLabel"] p {
+        color: #1a1a2e !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+    }
+    /* Slider current-value bubble text */
+    div[data-testid="stSliderTickBarMin"],
+    div[data-testid="stSliderTickBarMax"] {
+        color: #555 !important;
+    }
+    /* General body/paragraph text inside main content */
+    .main p, .main span, .main label {
+        color: #1a1a2e;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Load Models ───────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_models():
-    base=r'C:\Users\HP\OneDrive\Desktop\SSP_Project\StudentPerformancePredictor\spp\models' + '\\'
+    import os
+    base = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models') + os.sep
     with open(base+'scaler.pkl',   'rb') as f: scaler = pickle.load(f)
     with open(base+'rf_reg.pkl',   'rb') as f: rf_reg = pickle.load(f)
     with open(base+'lin_reg.pkl',  'rb') as f: lin_reg = pickle.load(f)
@@ -79,8 +99,9 @@ def load_models():
 
 @st.cache_data
 def load_data():
-    return pd.read_csv(r'C:\Users\HP\OneDrive\Desktop\SSP_Project\StudentPerformancePredictor\spp\data\student_data.csv')
-            
+    import os
+    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return pd.read_csv(os.path.join(base, 'data', 'student_data.csv'))
 
 scaler, rf_reg, lin_reg, rf_clf, log_reg, svm_m, gb_reg, feat_imp, conf_mat, clf_rep = load_models()
 df = load_data()
@@ -178,7 +199,7 @@ if page == "🏠  Dashboard":
         for bar, val in zip(bars, grade_counts.values):
             ax.text(bar.get_x()+bar.get_width()/2, bar.get_height()+1, str(val), ha='center', fontweight='bold', fontsize=10)
         ax.set_xlabel("Grade", fontsize=11); ax.set_ylabel("Number of Students", fontsize=11)
-        ax.set_facecolor('#f9f9f9'); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#eae5e5ff"); fig.patch.set_facecolor('white')
         ax.spines[['top','right']].set_visible(False)
         st.pyplot(fig); plt.close()
 
@@ -205,7 +226,7 @@ if page == "🏠  Dashboard":
         ax.bar(grp['att_bracket'].astype(str), grp['final_score'],
                color='#27ae60', alpha=0.85, edgecolor='white', linewidth=1.2, width=0.6)
         ax.set_xlabel("Attendance %", fontsize=11); ax.set_ylabel("Avg Final Score", fontsize=11)
-        ax.set_facecolor('#f9f9f9'); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#170A0A"); fig.patch.set_facecolor('white')
         ax.spines[['top','right']].set_visible(False)
         st.pyplot(fig); plt.close()
 
@@ -220,7 +241,7 @@ if page == "🏠  Dashboard":
         xs = np.linspace(df['study_hours'].min(), df['study_hours'].max(), 100)
         ax.plot(xs, p(xs), 'r--', linewidth=1.5, alpha=0.8)
         ax.set_xlabel("Daily Study Hours", fontsize=11); ax.set_ylabel("Final Score", fontsize=11)
-        ax.set_facecolor('#f9f9f9'); fig.patch.set_facecolor('white')
+        ax.set_facecolor("#1a0707"); fig.patch.set_facecolor('white')
         ax.spines[['top','right']].set_visible(False)
         st.pyplot(fig); plt.close()
 
@@ -596,19 +617,19 @@ elif page == "ℹ️  About":
             "School":         "School of Information Technology",
             "Branch":         "CSE (Data Science)",
             "Semester":       "6th Semester",
-            "Session":        "2024–25",
+            "Session":        "2025–26",
         }
-        for k, v in details.items():
-            st.markdown(f"**{k}:** {v}")
+        #for k, v in details.items():
+            #st.markdown(f"**{k}:** {v}")
 
-        st.markdown("---")
-        st.subheader("👨‍💻 Team Members")
-        st.markdown("- **NAME-1** *(Enrollment No.-1)*")
-        st.markdown("- **NAME-2** *(Enrollment No.-2)*")
-        st.markdown("- **NAME-3** *(Enrollment No.-3)*")
-        st.markdown("")
-        st.markdown("**Guide:** [Guide Name] — *Designation*")
-        st.markdown("**Co-Guide:** [Co-Guide Name] — *Designation*")
+        #st.markdown("---")
+        #st.subheader("👨‍💻 Team Members")
+        #st.markdown("- **NAME-1** *(Enrollment No.-1)*")
+       # st.markdown("- **NAME-2** *(Enrollment No.-2)*")
+        #st.markdown("- **NAME-3** *(Enrollment No.-3)*")
+        #st.markdown("")
+        #st.markdown("**Guide:** [Guide Name] — *Designation*")
+        #st.markdown("**Co-Guide:** [Co-Guide Name] — *Designation*")
 
     with col2:
         st.subheader("⚙️ Tech Stack")
